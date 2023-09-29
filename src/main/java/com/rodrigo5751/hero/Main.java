@@ -1,4 +1,4 @@
-package com.rodrigo-5751.hero;
+package com.rodrigo5751.hero;
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.

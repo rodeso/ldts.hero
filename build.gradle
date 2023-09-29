@@ -1,8 +1,9 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
-group = 'com.rodrigo-5751.hero'
+group = 'com.rodrigo5751.hero'
 version = '1.0-SNAPSHOT'
 
 repositories {
@@ -12,8 +13,13 @@ repositories {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation group: 'com.googlecode.lanterna', name: 'lanterna', version: '3.1.1'
 }
 
 test {
     useJUnitPlatform()
+}
+
+application {
+    mainClass.set("Application")
 }
