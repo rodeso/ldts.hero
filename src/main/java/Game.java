@@ -1,3 +1,4 @@
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -10,47 +11,29 @@ import javax.swing.*;
 import java.io.IOException;
 
 public class Game {
-    private int x = 10;
-    private int y = 10;
+    Hero hero;
+    Position position;
     private Screen screen;
     public Game() {
         try {
-            Terminal terminal = new DefaultTerminalFactory().createTerminal();
+            position = new Position(75, 25);
+            hero = new Hero(position);
+            TerminalSize terminalSize = new TerminalSize(150, 50);
+            DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory().setInitialTerminalSize(terminalSize);
+            Terminal terminal = terminalFactory.createTerminal();
             screen = new TerminalScreen(terminal);
             screen.setCursorPosition(null); // we don't need a cursor
             screen.startScreen(); // screens must be started
             screen.doResizeIfNecessary(); // resize screen if necessary
-            screen.clear();
-            screen.setCharacter(x, y, TextCharacter.fromCharacter('X')[0]);
-            screen.refresh();
         }
         catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void processKey(KeyStroke key) {
-        switch (key.getKeyType()) {
-            case ArrowUp:
-                y -= 1;
-                break;
-            case ArrowDown:
-                y += 1;
-                break;
-            case ArrowLeft:
-                x -= 1;
-                break;
-            case ArrowRight:
-                x += 1;
-                break;
-            case EOF:
-                break;
-        }
-        System.out.println(key);
-    }
     private void draw() throws IOException {
         screen.clear();
-        screen.setCharacter(x, y, TextCharacter.fromCharacter('X')[0]);
+        hero.draw(screen);
         screen.refresh();
     }
 
@@ -64,5 +47,28 @@ public class Game {
                 flag = false;
             }
         }
+    }
+    private void moveHero(Position p) {
+        hero.setPosition(p);
+    }
+
+    private void processKey(KeyStroke key) {
+        switch (key.getKeyType()) {
+            case ArrowUp:
+                moveHero(hero.moveUp());
+                break;
+            case ArrowDown:
+                moveHero(hero.moveDown());
+                break;
+            case ArrowLeft:
+                moveHero(hero.moveLeft());
+                break;
+            case ArrowRight:
+                moveHero(hero.moveRight());
+                break;
+            case EOF:
+                break;
+        }
+        System.out.println(key);
     }
 }
