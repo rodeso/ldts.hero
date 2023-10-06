@@ -8,22 +8,25 @@ import java.util.List;
 
 public class Arena {
     //attributes
-    private final int width, height, coins_available;
+    private final int width, height, coins_available, n_monsters;
     private int coins_collected;
     Hero hero;
     private final List<Wall> walls;
+    private final List<Monster> monsters;
     private List<Coin> coins;
     List<Coin> collectedCoins;
 
     //constructor
-    public Arena(int w, int h, int c) {
+    public Arena(int w, int h, int c, int m) {
         width = w;
         height = h;
         coins_available = c;
         coins_collected = 0;
+        n_monsters = m;
         Position position = new Position(w / 2, h / 2);
         hero = new Hero(position);
         this.walls = createWalls();
+        this.monsters = createMonsters(m);
         this.coins = createCoins(c);
     }
 
@@ -49,12 +52,15 @@ public class Arena {
         //draw walls
         for (Wall wall : walls)
             wall.draw(graphics);
+        //draw monsters
+        for (Monster monster : monsters)
+            monster.draw(graphics);
         //draw coins
         for (Coin coin : coins)
             coin.draw(graphics);
     }
 
-    private boolean canHeroMove(Position p) {
+    private boolean canMove(Position p) {
         for (Wall wall : walls)
             if (wall.getPosition().equals(p))
                 return false;
@@ -62,7 +68,7 @@ public class Arena {
         return (width > p.getX() && height > p.getY() && p.getY() >= 0 && p.getX() >= 0);
     }
     private void moveHero(Position p) {
-        if (canHeroMove(p))
+        if (canMove(p))
             hero.setPosition(p);
     }
     public void processKey(KeyStroke key) {
@@ -82,6 +88,7 @@ public class Arena {
             case EOF:
                 break;
         }
+        moveMonsters();
         retrieveCoins();
         System.out.println(key);
         System.out.println(hero.getX());
@@ -98,6 +105,29 @@ public class Arena {
             walls.add(new Wall(new Position(width - 1, r)));
         }
         return walls;
+    }
+    private List<Monster> createMonsters(int n) {
+        Random random = new Random();
+        List<Monster> monsters = new ArrayList<>();
+        for (int i = 0; i < n; i++)
+            monsters.add(new Monster(new Position(random.nextInt(width - 2) + 1, random.nextInt(height - 2) + 1)));
+        return monsters;
+    }
+    public void moveMonsters() {
+        for (Monster monster : monsters) {
+            if (canMove(monster.getPosition()))
+                monster.setPosition(monster.move());
+        }
+    }
+    public int verifyMonsterCollision() {
+        Position heroPosition = hero.getPosition();
+        int i = 0;
+        for (Monster monster : monsters) {
+            if (monster.getPosition().equals(heroPosition)) {
+                i++;
+            }
+        }
+        return i;
     }
     private List<Coin> createCoins(int n) {
         Random random = new Random();

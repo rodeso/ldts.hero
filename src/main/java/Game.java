@@ -11,9 +11,9 @@ import java.io.IOException;
 public class Game {
     Arena arena;
     private Screen screen;
-    public Game(int width, int height, int coins) {
+    public Game(int width, int height, int coins, int monsters) {
         try {
-            arena = new Arena(width, height, coins); //creates new arena with the window size
+            arena = new Arena(width, height, coins, monsters); //creates new arena with the window size
             //window size
             TerminalSize terminalSize = new TerminalSize(width, height);
             DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory().setInitialTerminalSize(terminalSize);
@@ -42,9 +42,16 @@ public class Game {
             processKey(key);
             if (key.getKeyType() == KeyType.EOF) {
                 flag = false;
+                System.out.println("Game exited");
             }
-            if (arena.getCoins_available() == arena.getCoins_collected() && arena.getCoins_available() != 0)
+            if (arena.getCoins_available() == arena.getCoins_collected() && arena.getCoins_available() != 0) {
                 flag = false;
+                System.out.println("You collected all the coins!");
+            }
+            if (arena.verifyMonsterCollision() != 0) {
+                flag = false;
+                System.out.println("You died!");
+            }
         }
     }
     private void processKey(KeyStroke key) {
