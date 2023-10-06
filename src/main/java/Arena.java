@@ -3,29 +3,43 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.List;
 
 public class Arena {
-    private final int width, height;
+    //attributes
+    private final int width, height, coins_available;
+    private int coins_collected;
     Hero hero;
     private final List<Wall> walls;
+    private List<Coin> coins;
+    List<Coin> collectedCoins;
 
-    public Arena(int w, int h) {
+    //constructor
+    public Arena(int w, int h, int c) {
         width = w;
         height = h;
+        coins_available = c;
+        coins_collected = 0;
         Position position = new Position(w / 2, h / 2);
         hero = new Hero(position);
         this.walls = createWalls();
+        this.coins = createCoins(c);
     }
 
+    //getters
     public int getWidth() {
         return width;
     }
-
     public int getHeight() {
         return height;
     }
-
+    public int getCoins_available() {
+        return coins_available;
+    }
+    public int getCoins_collected() {
+        return coins_collected;
+    }
     public void draw(TextGraphics graphics) {
         //draw background
         graphics.setBackgroundColor(TextColor.Factory.fromString("#c2b280")); //sand
@@ -35,7 +49,9 @@ public class Arena {
         //draw walls
         for (Wall wall : walls)
             wall.draw(graphics);
-
+        //draw coins
+        for (Coin coin : coins)
+            coin.draw(graphics);
     }
 
     private boolean canHeroMove(Position p) {
@@ -66,6 +82,7 @@ public class Arena {
             case EOF:
                 break;
         }
+        retrieveCoins();
         System.out.println(key);
         System.out.println(hero.getX());
         System.out.println(hero.getY());
@@ -82,4 +99,24 @@ public class Arena {
         }
         return walls;
     }
+    private List<Coin> createCoins(int n) {
+        Random random = new Random();
+        ArrayList<Coin> coins = new ArrayList<>();
+        for (int i = 0; i < n; i++)
+            coins.add(new Coin(new Position(random.nextInt(width - 2) + 1, random.nextInt(height - 2) + 1)));
+        return coins;
+    }
+    public void retrieveCoins() {
+        Position heroPosition = hero.getPosition();
+        List<Coin> collectedCoins = new ArrayList<>();
+
+        for (Coin coin : coins) {
+            if (coin.getPosition().equals(heroPosition)) {
+                collectedCoins.add(coin);
+                coins_collected++;
+            }
+        }
+        coins.removeAll(collectedCoins);
+    }
+
 }

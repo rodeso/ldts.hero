@@ -11,11 +11,11 @@ import java.io.IOException;
 public class Game {
     Arena arena;
     private Screen screen;
-    public Game(int x, int y) {
+    public Game(int width, int height, int coins) {
         try {
-            arena = new Arena(x, y); //creates new arena with the window size
+            arena = new Arena(width, height, coins); //creates new arena with the window size
             //window size
-            TerminalSize terminalSize = new TerminalSize(x, y);
+            TerminalSize terminalSize = new TerminalSize(width, height);
             DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory().setInitialTerminalSize(terminalSize);
             Terminal terminal = terminalFactory.createTerminal();
             screen = new TerminalScreen(terminal);
@@ -43,6 +43,8 @@ public class Game {
             if (key.getKeyType() == KeyType.EOF) {
                 flag = false;
             }
+            if (arena.getCoins_available() == arena.getCoins_collected() && arena.getCoins_available() != 0)
+                flag = false;
         }
     }
     private void processKey(KeyStroke key) {
