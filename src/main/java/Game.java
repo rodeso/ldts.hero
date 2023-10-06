@@ -1,5 +1,4 @@
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -7,18 +6,16 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
-import javax.swing.*;
 import java.io.IOException;
 
 public class Game {
-    Hero hero;
-    Position position;
+    Arena arena;
     private Screen screen;
-    public Game() {
+    public Game(int x, int y) {
         try {
-            position = new Position(75, 25);
-            hero = new Hero(position);
-            TerminalSize terminalSize = new TerminalSize(150, 50);
+            arena = new Arena(x, y); //creates new arena with the window size
+            //window size
+            TerminalSize terminalSize = new TerminalSize(x, y);
             DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory().setInitialTerminalSize(terminalSize);
             Terminal terminal = terminalFactory.createTerminal();
             screen = new TerminalScreen(terminal);
@@ -33,12 +30,12 @@ public class Game {
 
     private void draw() throws IOException {
         screen.clear();
-        hero.draw(screen);
+        arena.draw(screen.newTextGraphics());
         screen.refresh();
     }
 
     public void run() throws IOException {
-        Boolean flag = true;
+        boolean flag = true;
         while (flag) {
             draw();
             KeyStroke key = screen.readInput();
@@ -48,27 +45,7 @@ public class Game {
             }
         }
     }
-    private void moveHero(Position p) {
-        hero.setPosition(p);
-    }
-
     private void processKey(KeyStroke key) {
-        switch (key.getKeyType()) {
-            case ArrowUp:
-                moveHero(hero.moveUp());
-                break;
-            case ArrowDown:
-                moveHero(hero.moveDown());
-                break;
-            case ArrowLeft:
-                moveHero(hero.moveLeft());
-                break;
-            case ArrowRight:
-                moveHero(hero.moveRight());
-                break;
-            case EOF:
-                break;
-        }
-        System.out.println(key);
+        arena.processKey(key);
     }
 }
