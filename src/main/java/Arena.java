@@ -23,11 +23,11 @@ public class Arena {
         coins_available = c;
         coins_collected = 0;
         n_monsters = m;
-        Position position = new Position(w / 2, h / 2);
+        Position position = new Position(width / 2, height / 2);
         hero = new Hero(position);
         this.walls = createWalls();
-        this.monsters = createMonsters(m);
-        this.coins = createCoins(c);
+        this.monsters = createMonsters(n_monsters);
+        this.coins = createCoins(coins_available);
     }
 
     //getters
