@@ -12,8 +12,6 @@ public class Monster extends Element{
     public Position move() {
         Random random = new Random();
         int direction = random.nextInt(4); // Generate a random number between 0 and 3 (inclusive)
-
-        // Calculate the new position based on the randomly selected direction
         return switch (direction) {
             case 0 -> // North
                     new Position(super.getX(), super.getY() - 1);

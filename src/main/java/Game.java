@@ -9,6 +9,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
 
 public class Game {
+    private int frames;
     Arena arena;
     private Screen screen;
     public Game(int width, int height, int coins, int monsters) {
@@ -26,6 +27,9 @@ public class Game {
         catch (IOException e) {
             e.printStackTrace();
         }
+        finally {
+            screen.clear();
+        }
     }
 
     private void draw() throws IOException {
@@ -35,9 +39,10 @@ public class Game {
     }
 
     public void run() throws IOException {
+        frames = 0;
         boolean flag = true;
+        draw();
         while (flag) {
-            draw();
             KeyStroke key = screen.readInput();
             processKey(key);
             if (key.getKeyType() == KeyType.EOF) {
@@ -48,10 +53,12 @@ public class Game {
                 flag = false;
                 System.out.println("You collected all the coins!");
             }
-            if (arena.verifyMonsterCollision() != 0) {
+            if (arena.verifyMonsterCollision() > 0) {
                 flag = false;
                 System.out.println("You died!");
             }
+            System.out.printf("frame: %d\n", frames++);
+            draw();
         }
     }
     private void processKey(KeyStroke key) {

@@ -13,7 +13,7 @@ public class Arena {
     Hero hero;
     private final List<Wall> walls;
     private final List<Monster> monsters;
-    private List<Coin> coins;
+    private final List<Coin> coins;
     List<Coin> collectedCoins;
 
     //constructor
@@ -43,6 +43,7 @@ public class Arena {
     public int getCoins_collected() {
         return coins_collected;
     }
+    //draw
     public void draw(TextGraphics graphics) {
         //draw background
         graphics.setBackgroundColor(TextColor.Factory.fromString("#c2b280")); //sand
@@ -59,12 +60,14 @@ public class Arena {
         for (Coin coin : coins)
             coin.draw(graphics);
     }
-
+    //methods
     private boolean canMove(Position p) {
-        for (Wall wall : walls)
+        for (Wall wall : walls) {
+            if (wall.getPosition().equals(hero.getPosition()))
+                return true;
             if (wall.getPosition().equals(p))
                 return false;
-
+        }
         return (width > p.getX() && height > p.getY() && p.getY() >= 0 && p.getX() >= 0);
     }
     private void moveHero(Position p) {
@@ -90,9 +93,9 @@ public class Arena {
         }
         moveMonsters();
         retrieveCoins();
-        System.out.println(key);
-        System.out.println(hero.getX());
-        System.out.println(hero.getY());
+        System.out.printf("Key Press: %s\n", key);
+        System.out.printf("x: %d\n", hero.getX());
+        System.out.printf("y: %d\n", hero.getY());
     }
     private List<Wall> createWalls() {
         List<Wall> walls = new ArrayList<>();
@@ -115,8 +118,9 @@ public class Arena {
     }
     public void moveMonsters() {
         for (Monster monster : monsters) {
-            if (canMove(monster.getPosition()))
-                monster.setPosition(monster.move());
+            Position p = monster.move();
+            if (canMove(p))
+                monster.setPosition(p);
         }
     }
     public int verifyMonsterCollision() {
@@ -126,7 +130,24 @@ public class Arena {
             if (monster.getPosition().equals(heroPosition)) {
                 i++;
             }
+            Position heroPositionPX = new Position(hero.getX()+1, hero.getY());
+            if (monster.getPosition().equals(heroPositionPX)) {
+                i++;
+            }
+            Position heroPositionNX = new Position(hero.getX()-1, hero.getY());
+            if (monster.getPosition().equals(heroPositionNX)) {
+                i++;
+            }
+            Position heroPositionPY = new Position(hero.getX(), hero.getY()+1);
+            if (monster.getPosition().equals(heroPositionPY)) {
+                i++;
+            }
+            Position heroPositionNY = new Position(hero.getX(), hero.getY()-1);
+            if (monster.getPosition().equals(heroPositionNY)) {
+                i++;
+            }
         }
+        System.out.printf("monster collision: %d\n", i);
         return i;
     }
     private List<Coin> createCoins(int n) {
